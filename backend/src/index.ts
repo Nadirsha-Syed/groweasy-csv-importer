@@ -20,6 +20,6 @@ app.get('/health', (req, res) => {
   res.json({ status: 'active', time: new Date() });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Processing Engine running on http://localhost:${PORT}`);
+app.listen(Number(PORT), '0.0.0.0', () => {
+  console.log(`🚀 Processing Engine is running dynamically on port ${PORT}`);
 });
