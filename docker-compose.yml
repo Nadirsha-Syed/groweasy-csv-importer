@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    networks:
+      - groweasy-network
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+    networks:
+      - groweasy-network
+    depends_on:
+      - backend
+
+networks:
+  groweasy-network:
+    driver: bridge
