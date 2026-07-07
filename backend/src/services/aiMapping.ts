@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -43,48 +43,44 @@ export class AIMappingService {
         }
       } catch (error) {
         console.error(`Execution failure processing index sequence range ${i} -> ${i + batchSize}:`, error);
-        // Fallback: If a batch fails entirely due to an upstream rate error, count them as skipped records
         skippedCount += currentBatch.length;
       }
     }
 
     return { successfullyParsed, skippedCount };
   }
-
-
   private static async executeLLMQuery(rows: Record<string, string>[]) {
-    // Relying on the rapid gemini-2.5-flash engine for low latency mapping
     const model = aiProvider.getGenerativeModel({
       model: 'gemini-2.5-flash',
       generationConfig: {
         responseMimeType: 'application/json',
         responseSchema: {
-          type: 'object',
+          type: SchemaType.OBJECT,
           properties: {
             parsed: {
-              type: 'array',
+              type: SchemaType.ARRAY,
               items: {
-                type: 'object',
+                type: SchemaType.OBJECT,
                 properties: {
-                  created_at: { type: 'string' },
-                  name: { type: 'string' },
-                  email: { type: 'string' },
-                  country_code: { type: 'string' },
-                  mobile_without_country_code: { type: 'string' },
-                  company: { type: 'string' },
-                  city: { type: 'string' },
-                  state: { type: 'string' },
-                  country: { type: 'string' },
-                  lead_owner: { type: 'string' },
-                  crm_status: { type: 'string' },
-                  crm_note: { type: 'string' },
-                  data_source: { type: 'string' },
-                  possession_time: { type: 'string' },
-                  description: { type: 'string' }
+                  created_at: { type: SchemaType.STRING },
+                  name: { type: SchemaType.STRING },
+                  email: { type: SchemaType.STRING },
+                  country_code: { type: SchemaType.STRING },
+                  mobile_without_country_code: { type: SchemaType.STRING },
+                  company: { type: SchemaType.STRING },
+                  city: { type: SchemaType.STRING },
+                  state: { type: SchemaType.STRING },
+                  country: { type: SchemaType.STRING },
+                  lead_owner: { type: SchemaType.STRING },
+                  crm_status: { type: SchemaType.STRING },
+                  crm_note: { type: SchemaType.STRING },
+                  data_source: { type: SchemaType.STRING },
+                  possession_time: { type: SchemaType.STRING },
+                  description: { type: SchemaType.STRING }
                 }
               }
             },
-            skipped: { type: 'integer' }
+            skipped: { type: SchemaType.INTEGER }
           },
           required: ['parsed', 'skipped']
         }
